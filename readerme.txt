@@ -65,8 +65,87 @@ def index(request):
         reverse("name")
 
 9、配置文件
-1. base_dir
+1. base_dir：项目根路径
 2. debug
+    调试模式
+    上线改成False
 3. 本地化设置
+    zh-hans
+    Asia/Shanghai
 
+10、静态文件
+1. static_url：路由名字
+2. staticfiles_dirs：静态资源文件夹的名字
 
+3. staticfiles_dir：存放查找静态文件的目录
+    static_url：访问静态文件的URL前缀
+
+notes：django仅在调试模式下(debug=true)能对外提供静态文件
+       当debug=false工作在生产模式时，django不再对外提供静态文件，需要用collectstatic命令
+       来收集静态文件并交由其他静态文件服务器来提供。
+
+11、请求对象request
+1. 利用http协议向服务器传参有几种途径：
+    a. 提取URL的特定部分，如/weather/beijing/2018，可以在服务端的路由中用正则表达式截取
+    b. 查询字符串(query string)，形如key1=value1&key2=value2;
+    c. 请求体（body）中发送的数据，比如表单数据、json、xml
+    d. 在http报文的头（header）中
+
+2. 传参的4种方式
+    a.URL路径传参
+    b.查询字符串
+    c.请求体
+    d.请求头header
+
+2.1 URL 路径参数
+    在定义路由URL时，可以使用正则表达式提取参数的方法从URL中获取请求参数，Django会将提取的参数直接传递到视图的传入参数中
+    a. 未命名参数按定义顺序传递
+    b. 命名参数按名字传递
+
+    from django.urls import path
+    from . import views
+
+    urlpatterns = [
+        path("articles/2003/", views.special_case_2003),
+        path("articles/<int:year>/", views.year_archive),
+        path("articles/<int:year>/<int:month>/", views.month_archive),
+        path("articles/<int:year>/<int:month>/<slug:slug>/", views.article_detail),
+    ]
+
+    路径转换器：下面的路径转换器在默认情况下是有效的：
+        str - 匹配除了 '/' 之外的非空字符串。如果表达式内不包含转换器，则会默认匹配字符串。
+        int - 匹配 0 或任何正整数。返回一个 int 。
+        slug - 匹配任意由 ASCII 字母或数字以及连字符和下划线组成的短标签。比如，building-your-1st-django-site 。
+        uuid - 匹配一个格式化的 UUID 。为了防止多个 URL 映射到同一个页面，必须包含破折号并且字符都为小写。比如，075194d3-6885-417e-a8a8-6c931e272f00。返回一个 UUID 实例。
+        path - 匹配非空字段，包括路径分隔符 '/' 。它允许你匹配完整的 URL 路径而不是像 str 那样匹配 URL 的一部分。
+
+2.2 查询字符串query string
+    定义在django.http.QueryDict：支持一键多值
+    HttpRequest对象的属性GET、POST都是QueryDict类型的对象
+    与python字典不同，QueryDict类型的对象用来处理同一个健带有多个值的情况
+    a. 方法get()：根据键获取值
+    b. 方法getlist()：根据键获取值，值以列表返回
+    重要：查询字符串不区分请求方式，即假使客户端进行post方式的请求，依然可以通过request.get获取请求中的查询字符串数据
+
+    获取请求路径中的查询字符串参数（形如?k1=v1&k2=v2），可以通过request.Get属性获取，返回queryDict对象
+    ?key1=value1&key2=value2
+    request.GET  
+        get('key')  
+        getlist('key')
+        QueryDict：支持一键多值
+
+2.3 请求体
+    请求体数据格式不固定，可以是表单类型字符串，可以是JSON字符串，可以是XML字符串，应区别对待
+    可以发送请求体数据的请求方式有post、put、patch、delete
+    django默认开启了CSRF防护，会对上述请求方式进行CSRF防护验证，在测试时可以关闭CSRF防护机制，方法为在settings.py文件中注释掉CSRF中间件
+    # 中间层 中间件
+    MIDDLEWARE = [
+    # 'django.middleware.csrf.CsrfViewMiddleware',
+    ]
+
+1. 表单类型 Form Data
+    前端发送的表单类型的请求数据，可以通过request.post属性获取，返回querydict对象
+    重要：request.post只能用来获取post方式的请求体表单数据
+2. 非表单类型 Non-Form Data
+    非表单类型的请求体数据，Django无法自动解析，可以通过request.body属性获取最原始的请求体数据，自己按照请求体格式（json、xml）进行解析。
+    request.body返回bytes类型

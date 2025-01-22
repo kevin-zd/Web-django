@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+# 项目的根路径
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -23,13 +24,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-v^hdt^+luy^_8h@j8pe+gaqbullhquew@)#ftbv_j8c978-=36'
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# 开启调试模式，警告：生产环境需要设置 False
 DEBUG = True
 
 ALLOWED_HOSTS = []
 
 
 # Application definition
-
+# 注册应用
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -38,14 +40,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # 注册子应用
-    'demoapp.apps.DemoappConfig'
+    'demoapp.apps.DemoappConfig',
+    'demorequest.apps.DemorequestConfig'
 ]
 
+# 中间层 中间件
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -53,6 +57,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'demo.urls'
 
+# 模版设置
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -74,7 +79,7 @@ WSGI_APPLICATION = 'demo.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
+# 数据库的配置
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -104,10 +109,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
+# 本地化
+LANGUAGE_CODE = 'en-us'   # zh-hans 中文
 
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
+# 时区
+TIME_ZONE = 'UTC'        # Asia/Shanghai
 
 USE_I18N = True
 
@@ -116,8 +122,9 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
-
+# 静态文件
 STATIC_URL = 'static/'
+STATICFILES_DIRS = ['static_files']
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

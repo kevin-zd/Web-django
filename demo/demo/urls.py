@@ -21,9 +21,13 @@ import demoapp.views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('demoapp/', include("demoapp.urls"))   
+    path('demoapp/', include("demoapp.urls")),
 
 
     # 设置路由的第二种方式：直接在总路由配置
     # path('demoapp/', demoapp.views.index)
+
+    # 请求参数的获取
+    path('demorequest/', include("demorequest.urls")),   
+
 ]
