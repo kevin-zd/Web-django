@@ -1,0 +1,72 @@
+
+文件路径
+    $ pwd
+    /Users/bytedance/PycharmProjects/Web-django
+    $ django-admin startproject demo
+
+运行
+   $ python manage.py runserver
+
+
+5、创建工程
+    1. cd 项目文件夹
+    2. django-admin startproject 项目名称
+    3. 运行
+        python manager.py runserver
+
+6、创建子应用APP
+
+1.创建子应用
+    cd 工程项目
+    $ python manage.py startapp demoapp
+    
+2.注册应用
+    seetings.py    --配置文件
+    INSTALLED_APPS = [
+    # 注册子应用
+    'demoapp.apps.DemoappConfig'
+    ]
+
+7、创建视图
+django的视图是定义在子应用的views.py中的
+  1. 创建视图
+  打开创建的应用模块，在views.py中编写视图代码
+from django.http.response import HttpResponse
+
+# 创建视图函数
+def index(request):
+    “”“
+    index视图
+    :param request：包含了请求信息的请求对象
+    :return：响应对象
+    ”“”
+    # 返回响应对象
+    return HttpResponse('这是第一个子应用的视图函数功能展示')
+  2. 路由配置
+    a.子应用
+        创建urls.py
+        定义路由
+    b.工程总路由
+        添加子路由
+
+8、路由说明
+1. 路由定义方式2
+    a. 总路由-子路由
+    b. 直接在总路由配置
+2. 路由解析顺序
+    从上到下匹配
+    注意避免屏蔽路由
+3. 路由命名
+    name
+4. reverse反解析
+    a. 有namespace  
+        reverse("namespace:name")
+    b. 只有name
+        reverse("name")
+
+9、配置文件
+1. base_dir
+2. debug
+3. 本地化设置
+
+
