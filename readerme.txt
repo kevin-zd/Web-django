@@ -149,3 +149,172 @@ notes：django仅在调试模式下(debug=true)能对外提供静态文件
 2. 非表单类型 Non-Form Data
     非表单类型的请求体数据，Django无法自动解析，可以通过request.body属性获取最原始的请求体数据，自己按照请求体格式（json、xml）进行解析。
     request.body返回bytes类型
+
+
+
+
+
+
+    admin 000000
+
+
+
+
+
+
+B站课程
+快速使用
+    在django中要提供数据展示给用户，需要完成3个步骤：
+    1.创建子应用
+    2.在子应用的视图文件views.py中编写视图函数
+    3.把视图函数和url进行绑定注册到django项目
+        用户就可以通过url地址访问，用户访问的时候，django自动根据url地址执行对应的视图函数
+
+    1、创建子应用
+        python manage.py startapp 子应用名称（目录）
+        django-admin startapp 子应用名称
+        子应用的名称将来会作为目录名而存在，务必按变量名的命名规则来创建，不能出现特殊符号，也不是不能出现中文等多字节的字符
+        更不能以数字开头
+    2、在子应用的视图文件中编写视图函数
+        goods/views.py，代码
+        from django.http.response import HttpResponse
+        def index(request):
+        # 业务代码，调用数据，for循环之类的
+            data = "okkkkk!!!"
+            return HttpResponse(data)
+    3、绑定路由和视图的映射关系
+        demo/urls.py，代码
+        from django.contrib import admin
+        from django.urls import path, include
+        import demoapp.views
+        urlpatterns = [
+            path('admin/', admin.site.urls),
+            path('index', index),
+        ]
+    可以通过http://127.0.0.1:8000拼接url地址indeex来访问视图函数
+
+网络知识
+    http协议
+    基本概念：http协议，即超文本传输协议，无状态网络应用协议，http协议构建于TCP/IP协议族之上，属于应用层协议。主要用于传输与超文本相关的资源文件，如HTML网页，css、js、图片、视频，音频等
+    直接构建于TCP协议之上，没有进行加密传输数据的是HTTP协议，默认通信端口是80端口，常用的端口有：3000，5000，8000，8080等
+    而构建于TLS或SSL协议之上，对数据使用SSL加壳加密传输数据的是HTTPS协议，默认通信端口是443端口，常用端口8443
+
+    请求方法
+    http请求方法（HTTP Request Method），表示客户端希望对服务器指定资源进行哪一种类型的操作，存在多种HTTP请求方法表达增删改。常见请求方法如下：
+    请求方法       描述                                                                   报文中是否包含请求体
+    get      表示客户端希望从服务器中获取或下载资源信息                                            false
+    post     表示客户端希望上传文件或通过请求在服务区创建资源信息                                    True
+    put      表示客户端希望修改或更新服务器资源（表示修改全部资源信息，例如数据表的一整个记录）           True
+    patch    表示客户端希望修改或更新服务器资源（表示修改部分资源信息，例如数据表的一个记录里面某个属性值） True
+    delete   表示客户端希望删除或废弃服务器资源                                                   false
+    option   表示客户端希望获取服务器所支持的请求方法列表                                           false
+    head     表示客户端希望获取服务器支持的跨域地址列表                                             false
+
+    请求路径
+    表示远程web服务器的一个可访问资源，一般就是代表的一个服务器具体文件或数据表中的记录信息，或一个服务端里面的函数或方法
+
+    请求头
+    HTTP请求头（Request Head），主要对客户端请求操作进行限制条件并补充说明。常见的标准HTTP请求头如下：
+    选项                描述                                                              值
+    Host           指定客户端请求的服务器的域名和端口号                                   www.baidu.com
+    Content-Type   告诉服务器，客户端请求携带的请求体数据的媒体类型信息(MIME类型)
+    User-Agent     告诉服务器HTTP客户端网络代理程序的版本信息，一般就是浏览器的版本信息
+    Authorization  告知服务器客户端的Web认证信息
+    Content-Length HTTP报文中请求体的大小，以字节为单位
+    Referer        告诉服务器该网页是从哪个页面链接过来，也就是上一个页面的地址
+    Accept         指定客户端能够接收并理解的媒体类型（MIME类型），用于表达希望服务端的返回资源格式
+    Accept-Encoding 指定浏览器可以支持的web服务器返回内容压缩编码类型
+    Pragma         指定服务端控制缓存行为。http/1.0以前的字段
+    Cache-Control  指定服务端控制缓存行为。http/1.1以后的字段
+    Upgrade        向服务器请求在当前http协议的基础上升级采用新的某种传输协议以便服务器进行转换
+    Connection     指定本次http通信结束以后，是否关闭TCP网络连接。如果设置持久连接，则可以在一次会话中，可以使用同一个TCP连接，进行多次的HTTP通信，提高效率
+
+    注意：在http通信过程中，请求头也是可以自定义的，但是不能出现多字节编码字符，例如中文等
+    
+    常见的MIME格式：
+    类型                           描述                 别名
+    text/html                    HTML网页          
+    application/json             json文本              text/json 
+    text/plain                  纯文本，普通文本
+    text/xml                       xml文档
+    application/javascript         js脚步              text/javascript
+
+    HTTP协议版本
+    状态码：用于表达本次服务端在接收客户端请求之后的操作结果的成功或失败，由三位整数组成
+    状态码             描述   
+    1xx             告诉客户端，本次请求，服务端孩子持续处理，并没有结束
+    2xx             告诉客户端，本次请求，服务端已经接收并成功受理了
+    3xx             告诉客户端，服务端位置发生改变，希望客户端重定向访问跳转新的服务器地址进行请求
+    4xx             告诉客户端，本次请求有误，服务器无法处理
+    5xx             告诉客户端，本次请求服务端在处理过程中服务端出错了
+
+    常见的HTTP状态码
+    状态码              响应信息            描述
+    101             switching protocol    服务器已经理解了客户端的请求，并将通过upgrade消息头通知客户端采用升级协议来完成请求
+    200                 ok                请求已成功，请求所希望的响应头或数据体将随此响应返回，出现此状态码是表示正常状态
+    201                 created           请求已成功，请求的资源已经创建成功或更新完成。常用于post，put或patch
+    204                 NO content        请求已成功，但是没有任何内容返回，常用于delete
+    301             moved permanently     永久重定向，表示当前客户端请求额资源地址已经永久发生改变
+    302             move temporarily      临时重定向，表示当前客户端请求的资源地址还存在，但是访问客户端达不到访问资源的条件，所以暂时无法访问
+    400             bad request           本次请求，报文含义有误或请求参数有误，当前请求无法被服务器理解
+    401             unauthorized          本次请求，需要用户验证，但用户并没有提供认证
+    403             forbidden             服务器已经理解请求，但拒绝执行，一般是因为没有权限导致的
+    404             not found             请求失败，请求所希望得到的资源未被在服务器上发现，请求路径不存在
+    502             bad gateway           网关宕机，作为网关或者代理工作的服务器尝试执行请求时，从上游服务器接收到无效的响应。一般就是大量的访问请求导致服务器瘫痪或宕机
+    504             gateway               网关超时
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

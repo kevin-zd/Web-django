@@ -22,6 +22,8 @@ import demoapp.views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('demoapp/', include("demoapp.urls")),
+    path('polls/', include("polls.urls")),
+    path('goods/', include("goods.urls")),
 
 
     # 设置路由的第二种方式：直接在总路由配置
