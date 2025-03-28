@@ -264,6 +264,112 @@ B站课程
     504             gateway               网关超时
 
 
+MVC设计模式
+    M-model：数据模型  用来操作数据库
+    V-view ：视图     用来进行数据的可视化
+    C-controller：控制器   用来进行数据的逻辑操作
+
+    交互流程
+    1.前端view视图里面页面--发送请求，给后台后端
+    2.控制器来接收请求controller --> 处理业务逻辑（1、判断路由 2.解析参数 3.对接model  4.返回数据）
+    3.Model--交互数据库--返回数据给C
+    4.C吧数据传给V展示
+
+MVT设计模式
+    Django主要采用MVT模式
+    M-model：模型，操作数据库功能部门
+    V-view：视图，处理业务逻辑的位置，提取数据，获取用户数据等操作
+    T-Template：模版，用来展示视图，操作后的数据，也可以在模版中为用户提供表单，让用户可以提交数据
+
+    交互流程
+    1.发送请求--django框架-- V--处理主业务逻辑（1.判断路由 2.解析参数 3.对接Model 4.返回数据）
+    2.V--获取数据--Model（交互数据库）
+    3.Model -->V 
+    4.V-->数据-- Template--模版
+    5.Template--模版--数据渲染-- V--展示--客户端
+
+
+路由入门
+Route路由，是一种映射关系，路由是把客户端请求的url地址和用户请求的应用程序【这里指django里面的视图】进行一对一绑定映射的关系。
+    
+    视图基础
+    Django的视图主要有2种写法，分别是函数视图和类视图
+        函数视图
+        django中所有的视图都建议编写在子应用的views.py文件中
+        from django.http.response import HttpResponse
+        def 函数视图名称(request):
+            # 代码
+            return HttpResponse(“返回内容”)
+        
+        函数视图名称，同一个模块下不能重复，同时采用变量命名规则
+
+    请求
+        视图中的request，实际上是django源码中的HTTPRequest的子类WSGIRequest类的实例对象，主要由django对客户端请求的http协议报文进行解析后得到的请求相关数据都在request对象中
+
+        限制http请求
+        web项目运行在http协议下，默认肯定也支持用户通过不同的http请求方法发送数据到服务端。常用http请求方法
+        http请求方法          描述
+        POST                 添加/上传
+        get                  获取/下载
+        put                  修改/更新，修改整体
+        patch                修改/更新，修改部分
+        delete               删除/废弃
+        
+        django支持让客户端只能通过指定的http请求来访问到项目的视图
+        home/views.py，代码
+
+    视图接收http请求
+    QueryDict的声明位置：from django.http import QueryDict
+    QueryDict常用方法有2个：
+    get（键，默认值） 通常指定键获取最后1个值
+    getlist(键)   通常指定键获取所有值，并以列表格式返回
+
+    获取请求体数据
+    在各种http请求方法中，post/put/patch都可以设置请求体。request.post中获取客户端通过post发送过来的请求体，无法获取put/patch的请求体
+
+    请求头：request.META 
+    server_name：服务端系统名称
+    server_port：服务端的运行端口
+    remote_host：客户端所在IP地址
+    remote_add：客户端所在的iP地址
+    server_software：服务端运行web服务器的软件打印信息
+    path_info：客户端本次请求时的url路径
+
+
+响应
+    视图响应数据
+    django和大多数的web框架一样，针对http的响应，提供了2种不同的响应方式：
+    1.响应内容，就是直接返回数据给客户端
+        a.响应http内容【一般用于web前后端不分离的项目】
+        b.响应json内容【一般用于开发web前后端分离的项目的api接口开发】
+    2.响应页面跳转，就是通过返回页面跳转的信息给浏览器，让浏览器自己进行页面跳转
+
+    返回HTML数据
+    代码：
+    def index5(request):
+
+    """ 响应： html数据 """
+    return HttpResponse("content=正文内容", content_type="内容格式", status="http响应状态码")
+    content        响应内容
+    content_type   内容格式默认是text/html
+    status         响应状态码，默认是200
+    headers        响应头，字典格式
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
