@@ -154,3 +154,30 @@ def index9(request):
     with open(f"{os.path.dirname(__file__)}/code.zip", "rb") as f:
         content = f.read()
     return HttpResponse(content, content_type="application/zip")
+
+def index10(request):
+    """ 自定义响应头 """
+    response = HttpResponse("ok index10")
+    response["company"] = "baidu"
+    return response
+
+
+""" 跳转/重定向 """
+from django.http.response import HttpResponseRedirect
+def index11(request):
+
+    response = HttpResponse(status=301)
+    response["Location"] = "https://www.163.com"
+    return response
+
+    # return HttpResponseRedirect("https://www.qq.com")
+
+""" 站内跳转 """
+from django.shortcuts import redirect
+from django.urls import reverse
+def index12(request):
+    # 除了要跳转正则路由以外，其他路径直接写上去即可，不需要使用reverse进行解析
+    url = reverse("goods:index3")   # reverse("namespace:name") namespace就是路径的前缀命名空间，name就是路径别名
+    return redirect(url)
+
+    # return redirect("/goods/index3")

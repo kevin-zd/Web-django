@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        table{
+            border-collapse: collapse;
+            width: 800px;
+        }
+        td{
+            border: 1px solid red;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    {% comment %}
+    如果用户是root则显示管理员登录，否则显示普通用户登录
+    {% endcomment %}
+    {% if name == "root" %}
+        <p>管理员登录成功</p>
+    {% else %}
+        <p>普通用户登录成功</p>
+    {% endif %}
+
+
+    {{book_list}}
+    <table>
+        <tr>
+            <td>正序号[counter]</td>
+            <td>正序号[counter0]</td>
+            <td>倒序号[revcounter]</td>
+            <td>倒序号[revcounter0]</td>
+            <td>编号</td>
+            <td>书名</td>
+            <td>价格</td>
+        </tr>
+        {% for book in book_list %}
+        {% if forloop.last %}
+        <tr style="background: aqua;">
+        {% else %}
+        <tr>
+        {% endif %}
+            <td>{{ forloop.counter }} </td>
+            <td>{{ forloop.counter0 }} </td>
+            <td>{{ forloop.revcounter }} </td>
+            <td>{{ forloop.revcounter0 }} </td>
+            <td>{{book.id}}</td>
+            <td>{{book.name}}</td>
+            <td>{{book.price}}</td> 
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

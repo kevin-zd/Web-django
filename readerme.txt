@@ -355,6 +355,310 @@ Route路由，是一种映射关系，路由是把客户端请求的url地址和
     status         响应状态码，默认是200
     headers        响应头，字典格式
 
+页面跳转
+    页面跳转也有2种方式：站外跳转与站内跳转
+
+会话控制技术
+    主要作用：为了识别和记录用户在web应用中的身份行为和操作历史
+    会话的单词：session，所谓一次会话就是客户端和服务端之间进行通信的一次完整过程
+    在web项目中：
+        客户端和服务端之间产生的会话开始于：在用户第一次输入url访问网站的时候
+        客户端和服务端之间的会话结束于关闭浏览器
+    注：如果在移动端下面，则必须关闭当前app应用才算结束，如果只是后台运行，会话并没有结束
+    所以会话跟踪技术就是在一次完整的会话中，能让服务端识别客户端在整个过程中的身份行为和操作历史的一项技术
+
+    实现会话控制的几种技术类型：
+    1.url地址栏记录用户身份的参数【少见，很古老的技术，例如：QQ邮箱，QQ空间】
+    2.cookie：在浏览器中由浏览器自动读写保存用户信息的一种小文件，能够存储的数据有限，30M左右【过时了，谷歌在2021开始慢慢关闭这个cookie技术了】
+    3.session：在服务端中保存用户信息的一种小文件，能够存储的数据有限，根据服务端配置而定。session默认是基于cookie的
+    4.token令牌：就是一段可以记录和识别用户身份的字符串，通过客户端语言【js/安卓/ios】保存在客户端中一项技术，替代cookie或session
+
+视图接收http请求
+    在http请求和响应过程中，用户往往会在请求过程中发送请求信息给服务端。那么客户端发送请求数据一般无非以下几种格式：
+    1.查询字符串[query string]
+        所谓的查询字符串就是url地址上面？号后面的数据，例如：
+        http://127.0.0.1:8000/home/index/?name=xiaoming&pwd=123
+        上面name=xiaoming&pwd=123就是查询字符串
+        可以通过request.Get来获取
+        注意：request.Get不是http请求，也就是说，只要地址上查询字符串，不管使用什么样的http请求方法，都可以在视图中使用request.Get来获取参数
+    2.请求体数据
+        获取请求体数据
+        在各种http请求方法中，post/put/patch都可以设置请求体的。request.Post中获取客户端通过post发送过来的表单数据，无法获取put/patch的请求体
+    3.请求头报文信息
+        request.META：获取当前项目相关的服务器与客户端环境信息，也包含请求头信息，以及服务端所在的系统环境变量
+        request.headers：获取http请求头
+        常见的请求头：
+            server_name：服务端系统名称
+            server_port：服务端的运行端口
+            remote_addr：客户端的所在IP地址
+            server_software：服务端运行web服务器的软件打印信息
+            path_info：客户端本次请求时的url路径
+    4.上传文件
+
+
+session【掌握】
+    session：会话控制技术的一种，session主要把用户状态信息保存在服务器的文件中
+    在没有进行特殊设置的情况下，session以文件格式保存状态数据，一般保存在目录是系统的缓存文件存储目录
+    例如：windows的C:/windows/temp目录，Linux/MAC OS的/temp目录
+    因为session是在服务端中保存数据，相对而言比cookie要安全，但是因为用户的数据都保存到服务器中，当用户基数大了，则服务器的存储压力就上来了。
+    所以不会考虑把session数据保存在文件，而是采用的第三方设置存储session的方案，例如保存到redis或者mysql之类的数据库里面
+    注意：三种常用的存储引擎：myisam,innodb,momery
+    
+
+路由进阶
+    在django中所有的路由最终都被保存到一个变量urlpatterns.urlpatterns必须声明在主应用下的urls.py总路由中，这是由配置文件settings设置的ROOT_URLCONF指定的。
+    在django运行中，当客户端发送一个http请求到服务端，服务端的web服务器则会从http协议中提取url地址，从程序内部找到项目中添加到urlpatterns里面的所有路由信息的url进行遍历匹配。
+    如果相等或者匹配成功，则调用当前url对应的视图方法
+    在给urlpatterns路由列表添加路由的过程中，django一共提供2个函数用于绑定路由与视图关系
+    from django.urls import path      # 普通路由
+    from django.urls import re_path   # 正则路由，会把url地址看成一个正则模式与客户端的请求url地址进行正则匹配
+
+    path和re_path使用参数一致，仅仅在url参数和接收参数时写法不一样
+    如果在版本小于django2.0，只有一个django.urls.url函数用于注册路由，url不仅支持path普通路由，也支持re_path正则路由
+
+路由转换器：
+    也叫路由验证器，有2个作用：
+    1.把路由参数进行类型转换
+    2.可以起到验证路由匹配的作用（让字符串路由path发挥正则路由re_path的作用）
+
+    自定义路由转换器
+    实际上就是django在对路由进行数据转换和简写正则路由的实现，这种实现方式是基于不同的转换器类来完成，开发者要实现自定义转换器，需要编写的类必须符合官方要求的3个基本要求：
+    1.必须以类格式编写
+    2.必须声明属性和方法：regex和方法：to_python,to_url
+    3.必须通过register_converter(转换器类名，“别名”)进行注册才能被调用
+
+配置文件：
+    官方文档：https://docs.djangoproject.com/zh-hans/4.2/ref/settings/
+    在django中默认的核心包里面存在一个全局默认配置文件django/conf/global_settings.py，同时在开发者构建项目的时候，也生成一个全局项目配置文件在主应用目录下/setting.py文件中
+    这两个配置文件，在django项目运行时，django会先加载global_settings.py中的所有配置项到django.conf.settings对象中作为配置项存在，接着加载主应用目录下/setting.py的配置项，
+    所以settings.py中填写的配置项的优先级会高于global_settings.py的默认配置。
+
+
+模版语法
+    Django的DTL或jinja2模版引擎提供的语法无非4中格式不同的语法，分别是变量，注释，标签，过滤器
+    变量：{{变量}}
+    注释：{#单行注释#}
+    多行注释：{% comment %} 多行注释 {% endcomment %}
+    标签：{% 标签名 %}  #单标签
+         {% 开始标签 %} {% 结束标签 %}  #双标签
+
+        if判断语句
+            {% if name == a %}
+                <p></p>
+            {% elif user == b %}
+            {% elif user == c %}
+            {% else %}
+            {% endif %}
+
+        for循环语句
+            {% for book in book_list %}
+                <tr>
+                    <td>{{book.id}}</td>
+                    <td>{{book.name}}</td>
+                    <td>{{book.price}}</td> 
+                </tr>
+            {% endfor %}
+
+        循环标签中，模版引擎还提供了forloop对象，用于给开发者获取循环次数或者判断循环过程的
+        属性                描述
+        forloop.counter         显示循环的次数，从1开始
+        forloop.counter0        显示循环的次数，从0开始
+        forloop.revcounter0     倒数显示循环的次数，从0开始
+        forloop.revcounter      倒数显示循环的次数，从1开始
+        forloop.first           判断如果本次是循环的第一次，则结果为True
+        forloop.last            判断如果本次是循环的最后一次，则结果为True
+        forloop.parentloop      在多层嵌套循环中，指向当前循环的上级循环对象
+
+    过滤器：本质就是函数可以是python函数，也可以是开发者自定义函数，常用语再变量或者标签
+        单个无参过滤器，变量默认作为过滤器的第1个参数，过滤器中return的内容作为结果被输出
+    {{变量|过滤器}}
+        1)应用中创建了 templatetags 目录，并在其中有一个 Python 文件（例如 my_filters.py）。
+        2)在 my_filters.py 中，确保你已正确注册了自定义标签。例如：
+            from django import template
+            register = template.Library()
+
+            @register.filter
+            def your_custom_filter(value):
+            # 自定义过滤器的逻辑
+                return modified_value
+        3)模板文件中，加载标签库：
+            {% load my_filters %}
+        4)应用程序已添加到 INSTALLED_APPS 中，例如：
+            INSTALLED_APPS = [
+             ...
+            'your_app',
+             ...
+            ]
+        5)重启开发服务器
+
+模版继承
+    模版分离
+        django中提供了{% include “模版文件名" %}标签模版分离技术
+    模版继承
+        {% extends "base.html" %}
+        
+视图进阶
+    类视图
+        新建一个子应用，cbv
+
+    1.类视图必须直接或间接继承于django.views.view
+    2.在django的类视图中，所有提供给外界用户访问的视图方法名必须是http请求动作的小写名称
+        也就是说，方法名只能是get,post,put,patch,delete...
+    3.使用类视图，可以有效的减少路由绑定的代码
+        3.1可以直接通过视图方法名就可以达到限制客户端访问当前视图方法的http请求
+        3.2客户端访问对应的URL地址就会来到视图中，访问这个地址所使用http请求，就是将来视图类自动执行的方法
+        3.3有了类视图，可以把多个函数视图中原来的公共代码封装到一块进行调用，有利于代码复用
+
+    类视图的路由分发原理
+    可以通过postman来切换不同的http请求访问到同一个地址下不同的视图类方法中，这个主要原因是类视图的父类
+    ‘django.views.View’中提供了dispatch的路由分发方法实现的
+    这个路由分发方法，是开发者在给视图类绑定路由时调用了as_views()方法时进行注册调用的
+
+
+数据库
+    ORM框架
+        ORM的优点
+        ORM的缺点
+    配置数据库连接
+        在settings.py中保存了数据库的连接配置信息，Django默认初始化配置使用sqlite数据库
+        可以通过以下步骤来使用django的数据库操作
+        1.settings.py配置数据库连接信息
+        2.在目标子应用下的models.py中定义模型类
+        3.生成数据库迁移文件并执行迁移文件【注意：数据迁移是一个独立的用于创建数据表的功能，这个功能在其他web框架未必和ORM一块的】
+            第三步非必要，有些公司直接由DBA（数据库管理员）设计与管理数据表的，那么就不需要在django中数据迁移了，直接撸代码
+        4.通过模型类对象提供的方法或属性完成数据表的增删改查操作
+
+    1.使用MySQL数据库首先需要安装驱动程序
+        pip install PyMySQL
+            # conda install -c conda-forge pymysql   # 如果上面命令安装失败，则可以使用以下命令安装
+    
+    2.在django的主应用目录的_init_.py文件中添加如下语句，Django/_init_.py代码：
+    from pymysql import install_as_MySQLdb
+    install_as_MySQLdb()    # 让mysql以mysqlDB的方式来对接ORM
+    作用是让django的ORM能以mysqldb的方式来调用PyMySQL
+
+    3.修改DBTABASES配置信息，settings.py配置文件配置数据库的连接信息。demo/settings.py
+DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
+
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',    # ORM的底层对接pymysql的核心引擎类
+        'NAME': 'school',          # 数据库名
+        'USER': 'root',           # 账号
+        'PASSWORD': '000000',     # 密码
+        'HOST': '192.168.97.135',   # 数据库IP
+        'PORT': '3306',             # 端口
+        'POOL_OPTIONS': {         # pool表示数据库连接池配置，主要为了节省连接数据库的开发，临时存储数据库连接对象
+            'POOL_SIZE': 10,      # 默认情况下，打开的数据库连接对象的数量【1，2，3，4，5，6，7，8，9，10】
+            'MAX_OVERFLOW': 30,   # 负载情况下，允许溢出的连接数量 【11，12，13，14，15，16，17，18，19，20】
+        }
+    }
+}
+
+    4.在mysql中创建数据库
+        create database school;     # mysql8.0以后默认是utf8mb4;
+        create database school DEFAULT charset=utf8mb4;     # mysql8.0之前的版本
+
+定义模型类
+    模型类被定义在“子应用/models.py”文件中
+    模型类必须直接或者间接继承于django.db.models.Model类
+    
+模型定义
+    创建子应用student，注册子应用并引入子应用路由
+        python manage.py startapp student
+    settings.py代码：
+        'student',
+    demo/urls.py，总路由代码：
+        path('student/', include("student.urls")),
+
+    1）数据库名
+        可通过Meta.db_table指明数据库表名
+        模型类如果未指明表名Meta.db_table，django默认以小写子应用目录名_小写模型类名为数据库表名
+    2）关于主键
+        Django会为模型自动声明一个自动增长的主键列，每个模型只能有一个主键列
+        如果使用选项设置某个字段的约束属性为主键列（primary_key）后，Django不会再创建自动增长的主键列
+        class Student(models.Model):
+            id = models.BigAutoField(primary_key=True, verbose_name="主键“)  
+        默认创建的主键列属性名为id，也可以使用pk代替id,pk全拼为primary key
+    4）字段类型
+     文档：https://docs.djangoproject.com/zh-hans/4.2/ref/models/fields/#field-types
+    5）约束选项
+     文档：https://docs.djangoproject.com/zh-hans/4.2/ref/models/fields/#field-options
+    6）外键约束
+
+建表
+    C02GG171ML85:demo bytedance$ python manage.py makemigrations
+    C02GG171ML85:demo bytedance$ python manage.py migrate
+
+数据迁移
+    django中的数据迁移就是一个类，提供了一系列终端命令。数据迁移提供了简单的终端命令来实现，所以开发者不存在大的学习成本
+    只有2个命令，分别是python manage.py makemigrations 与 python manage.py migrate
+
+数据库基本操作
+    CURD：create(创建)、update(更新)、read(读取)、delete(删除)
+
+增加数据
+    save：通过创建模型类对象，执行对象的save()方法保存到数据库中
+    create：通过模型类objects.create()保存
+    bulk_create：通过模型类objects.bulk_create()批量增加数据
+
+查询数据
+    get：查询单一结果，如果不存在或者返回多个结果会抛出异常
+        查询不到，则返回模型类.DoesNotExit异常
+        查询多个，则返回模型类.MultipleObjectsReturned异常
+    
+    first：查询一个结果，查询不到，则返回None，查询多个，返回查询结果列表的第一个
+    all：查询所有结果，查询不到，则返回空列表对象
+
+更新数据
+    save：修改模型类对象的属性，然后执行save()方法同步到数据库中
+    update：使用模型类.objects.filter().update()，基于update来完成更新满足条件的所有数据，结果是受影响的行数
+
+删除数据
+    删除有两种方法，分别是删一条或多条数据
+    模型类对象.delete()
+    模型类对象.objects.filter().delete()
+
+数据库进阶操作
+    过滤条件
+        ORM在内部生成SQL中的where子句时，提供3个方法可以实现where过滤操作，包括：
+            filter：过滤出符合条件的多个结果
+            exclude：排除掉符合条件的多个结果，与filter相反，与filter互斥
+            get：过滤单一结果，结果不是一个，会报错
+        对于过滤条件的使用，上述三个方法相同，但是互斥，只能使用任意1个，故仅以filter进行练习
+        文档：https://docs.djangoproject.com/zh-hans/4.2/ref/models/querysets/#field-lookups
+        ORM使用过程中，设置查询过滤条件的表达语法，如下：
+        # 单表的过滤
+        模型类.objects.filter(属性名称__运算符=值)   # 是django的ORM提供的运算符
+        模型类.objects.exclude(属性名称__运算符=值)
+        模型类.objects.get(属性名称_运算符=值)
+        # 多表的过滤
+        模型类.objects.filter(外键属性名称_外键模型的属性名称_运算符=值)
+        模型类.objects.exclude(外键属性名称_外键模型的属性名称_运算符=值)
+        模型类.objects.get(外键属性名称_外键模型的属性名称_运算符=值)
+        # 属性名称和比较运算符间使用两个英文下划线，所以之前声明模型类，规定了属性名不能包括多个下划线
+    
+    相等
+        exact：表示判断值是否相等
+        
+
+
+
+
+        
+
+
+
+
+
+
+
+
+
+
 
 
 

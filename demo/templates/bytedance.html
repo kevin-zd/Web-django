@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>提交个人信息</h1>
+    <form action="/bytedance/submit" method="post">
+        <label for="leg_name">法定姓名：</label>
+        <input type="text" id="name" name="leg_name" required placeholder="法定姓名"><br><br>
+        <label for="com_name">常用姓名：</label>
+        <input type="text" id="name" name="com_name" required placeholder="常用姓名"><br><br>
+
+        <label>性别：</label>
+        <input type="radio" id="male" name="gender" value="male" required>
+        <label for="male">男</label>
+        <input type="radio" id="female" name="gender" value="female">
+        <label for="female">女</label><br><br>
+
+        <label for="name">国家/地区：</label>
+        <input type="text" id="name" name="region" required placeholder="国家/地区"><br><br>
+
+
+        <label for="mobile">个人电话：</label>
+        <input type="tel" id="mobile" name="mobile" required placeholder="个人电话"><br><br>
+
+        <label for="email">个人邮箱：</label>
+        <input type="email" id="email" name="email" required placeholder="个人邮箱"><br><br>
+
+        <label for="name">证件号码：</label>
+        <input type="text" id="name" name="name" required placeholder="证件号码"><br><br> 
+
+        <label for="age">年龄：</label>
+        <input type="number" id="age" name="age" min="1" max="120" required placeholder="请输入您的年龄"><br><br>
+
+        <label for="bio">个人简介：</label><br>
+        <textarea id="bio" name="bio" rows="4" cols="50" placeholder="简要介绍自己"></textarea><br><br>
+
+        <input type="submit" value="提交">
+    </form>
+    
+
+
+    
+</body>
+</html>

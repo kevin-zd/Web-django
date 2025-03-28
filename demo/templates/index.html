@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>DTL模版引擎</h1>
+    <p>姓名：{{name}}</p>
+    <p>年龄：{{age}}</p>
+
+    <h3>变量</h3>
+    <p>data1 = {{data1}}</p>
+    <p>data2 = {{data2}}</p>
+    <p>data3 = {{data3}}</p>
+    {# 提取集合的成员 #}
+    <p>data1.pop={{data1.pop}}</p>
+    {# 提取元组/列表的成员 #}
+    <p>data3 = {{data3.0}}</p>
+    <p>data3 = {{data3.2}}</p>
+
+    {# 输出字典 #}
+    <p>{{data4}}</p>
+    <p>{{data4.name}}</p>
+    <p>{{data4.age}}</p>
+
+    {# 输出对象的属性 #}
+    <p>{{ data5.BASE_DIR }}</p>
+
+    {# 复杂结构的数据不建议直接输出 #}
+    <p>{{ book_list }}</p>
+
+    {# 除了django本身的对象，也可以输出python的对象或其他自定义对象的属性 #}
+    {{ time.time }}
+
+</body>
+</html>

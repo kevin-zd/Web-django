@@ -20,32 +20,49 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
+# 密钥：用于提供加密算法的密钥
+# 加密：哈希串/序列串 = 加密算法（原始密码，密钥）
+# 验证：新哈希串 = 加密算法（原始密码，密钥）， 新哈希串==哈希串，则表示原始密码正确
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-v^hdt^+luy^_8h@j8pe+gaqbullhquew@)#ftbv_j8c978-=36'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # 开启调试模式，警告：生产环境需要设置 False
+# 在线下开发，设置Debug=true，Django不在基于测试服务器提供静态资源（图片,css,js）的访问，当服务端出错，会显示详尽错误信息
+# 在线上运营，设置debug=false，django基于测试服务器提供静态资源访问，当服务端出错，不会显示任何关于系统的错误信息，仅仅提供错误页面
 DEBUG = True
 
+# 设置当前Django项目允许客户端通过哪些地址访问到Django项目，“*”表示服务端的任意地址
+# ALLOWED_HOSTS = ["*"]
+ 
 ALLOWED_HOSTS = []
 
 
 # Application definition
 # 注册应用
+#  Django注册的子应用列表【用于数据库操作，缓存，日志，admin管理】
 INSTALLED_APPS = [
+    "simpleui",
     "polls.apps.PollsConfig",
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
+    'django.contrib.admin',     # admin站点的子应用
+    'django.contrib.auth',      # django内置的登录认证功能
+    'django.contrib.contenttypes',    # 内容类型管理
+    'django.contrib.sessions',        # session功能
+    'django.contrib.messages',        # 信号、消息功能的实现
+    'django.contrib.staticfiles',     # 静态文件浏览服务
     # 注册子应用
     'demoapp.apps.DemoappConfig',
-    'demorequest.apps.DemorequestConfig'
+    'demorequest.apps.DemorequestConfig',
+    'tem',
+    'djdemo',
+    'bytedance',
+    'cbv',
+    'student',
 ]
 
-# 中间层 中间件
+# 中间层 中间件、全局钩子、拦截器
+# 中间件，middleware，就是一个Django提供给开发者用于在http请求和响应过程中，进行数据拦截的插件系统/钩子系统
+# 用于进行拦截请求，或数据格式转换，权限判断
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -59,10 +76,11 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'demo.urls'
 
 # 模版设置
+# html模版引擎配置
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [ BASE_DIR / "templates"],        # 模版引擎目录
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -75,16 +93,31 @@ TEMPLATES = [
     },
 ]
 
+# web应用程序的模块
 WSGI_APPLICATION = 'demo.wsgi.application'
 
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 # 数据库的配置
+# django支持多库共存
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
+
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',    # ORM的底层对接pymysql的核心引擎类
+        'NAME': 'school',          # 数据库名
+        'USER': 'root',           # 账号
+        'PASSWORD': '000000',     # 密码
+        'HOST': '192.168.97.135',   # 数据库IP
+        'PORT': '3306',             # 端口
+        'POOL_OPTIONS': {         # pool表示数据库连接池配置，主要为了节省连接数据库的开发，临时存储数据库连接对象
+            'POOL_SIZE': 10,      # 默认情况下，打开的数据库连接对象的数量【1，2，3，4，5，6，7，8，9，10】
+            'MAX_OVERFLOW': 30,   # 负载情况下，允许溢出的连接数量 【11，12，13，14，15，16，17，18，19，20】
+        }
     }
 }
 
@@ -111,23 +144,35 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 # 本地化
-LANGUAGE_CODE = 'en-us'   # zh-hans 中文
+# LANGUAGE_CODE = 'en-us'   # zh-hans 中文
+LANGUAGE_CODE = 'zh-hans'   # zh-hans 中文
 
 # 时区
 TIME_ZONE = 'UTC'        # Asia/Shanghai
 
+# 是否开启国际化本地化功能
 USE_I18N = True
 
+# 是否启用时区转换
+# USE_TZ的值为False，则Django会基于TIME_ZONE的时区来转换时间，否则USE_TZ的值为TRUE，则采用基于操作系统时间来转换时间
 USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
-# 静态文件
+# 静态文件的访问url路径
 STATIC_URL = 'static/'
-STATICFILES_DIRS = ['static_files']
+# 指定django中保存静态文件资源的目录列表
+STATICFILES_DIRS = [ BASE_DIR / 'static_files']
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
+# 默认情况下，Django中的数据表的主键ID的数据类型bigint
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# session存储引擎
+SESSION_ENGINE = "django.contrib.sessions.backends.file"
+
+# session存储引擎为文件时的存储目录
+SESSION_FILE_PATH = BASE_DIR / "session_path"     # 路径拼接，如果当前目录不存在，必须手动创建，否则报错

@@ -23,7 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('demoapp/', include("demoapp.urls")),
     path('polls/', include("polls.urls")),
-    path('goods/', include("goods.urls")),
+    path('goods/', include("goods.urls", namespace="goods")),      # 路由前缀的别名，也叫命名空间
 
 
     # 设置路由的第二种方式：直接在总路由配置
@@ -31,5 +31,13 @@ urlpatterns = [
 
     # 请求参数的获取
     path('demorequest/', include("demorequest.urls")),   
+    path('cookie/', include('mycookie.urls')),
+    path('sess/', include("sess.urls")),     # session功能学习
+    path('user/', include("user.urls")),
+    path('tem/', include("tem.urls")),
+    path('djdemo/', include("djdemo.urls")),
+    path('bytedance/', include("bytedance.urls")),
+    path('cbv/', include("cbv.urls")),
+    path('student/', include("student.urls")),
 
 ]
