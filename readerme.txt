@@ -643,6 +643,86 @@ DATABASES = {
     
     相等
         exact：表示判断值是否相等
+    模糊查询 like "%_"
+        contains：是否包含
+        说明：如果要包含%无需转义，直接写即可
+
+    范围查询
+        in：是否包含在范围内
+
+    取值范围
+        range：设置开始值与结束值范围，进行数值判断，符合范围的数据被查询出来。不仅可以设置数值范围，也可以设置时间范围
+    
+    比较查询
+        gt   大于
+        gte  大于等于
+        lt   小于
+        lte  小于等于
+
+    日期查询
+        year、month、day、week_day、hour、minute、second：对日期时间类型的属性进行运算
+
+
+F对象
+    F对象，主要用于在SQL语句中针对字段之间的值进行比较的查询
+    之前的查询都是对象的属性与常量值比较，两个属性怎么比较呢？答：使用F对象，被定义在django.db.models中
+    from django.db.models import F 
+    # 查询出入学以后，数据没有被修改过的学生信息
+    student_objs = models.Student.objects.filter(created_time=F("updated_time")).values("name","created_time","updated_time")
+    print(student_objs)
+    
+    # 除了上面例子，还可以从工作中针对公司每月的营收（支出和收入）、股票（每月涨和跌）都可以使用F对象进行查询
+
+Q对象 
+    多个过滤器逐个调用表示逻辑与关系，同SQL语句中where部分的and关键字
+    例如：查询年龄大于20
+
+结果排序
+    使用order_by对结果进行排序
+
+限制查询
+    ORM中针对查询结果的数量限制，提供了一个查询集对象[QuerySet]，这个QuerySet，是ORM中针对查询结果进行临时保存数据的一个容器对象，可以通过了解这个QuerySet进行使用，达到查询优化的目的，也或者“限制查询结果数量”的作用
+
+查询集QuerySet
+    查询集，也称查询结果集、QuerySet，表示从数据库中获取的对象集合
+    当调用如下ORM提供的过滤器方法时，DJango会返回查询集（而不是简单的列表）
+        all()：返回所有数据
+        filter()：返回满足条件的数据，filter会默认调用all方法
+        exclude()：返回满足条件之外的数据，exclude会默认调用all方法
+        order_by()：对结果进行排序，order_by会默认调用all方法
+
+QuerySet两大特性
+    说明：开启mysql数据库日志有2种方式：
+        临时开启，通过mysql交互终端临时设置，如果服务器重启或者mysql重启，则日志的配置信息还原
+        永久开启，通过mysql的配置文件进行参数设置，将来即使服务器重启或mysql重启，都不会关闭日志功能
+        设置的打印日志是输入临时开启，用于辅助学习，数据库关闭或重启以后就失效了
+
+        --查看日志功能是否开启
+            mysql> show variables like "%general_log%";
+            mysql> set global general_log='ON';
+            mysql> set global general_log_file='/var/lib/mysql/general.log';     --可以不设置日志路径，默认日志路径不要包含特殊字符也不要出现中文
+
+    --mysql日志文件中时间一般跟系统时间是对不上的，原因是mysql的时区是0时区，中国是东八区
+    mysql> select @@log_timestamps;   # UTC,0时区
+
+    mysql> set global log_timestamps=SYSTEM;  #如果要永久设置，在上面配置文件中，添加log_timestamps=SYSTEM
+
+聚合分组
+    聚合函数
+    Django中，可以使用aggregate()过滤器调用聚合函数。聚合函数包括：avg平均，count总数，max最大，min最小，sum求和，被定义在django.db.models中
+
+    分组查询
+    QuerySet对象.annotate()
+    annotate()：进行分组统计，按values的字段进行group by
+    annotate()：返回值依然是queryset对象，增加了分组统计后的键值对
+
+    原生查询
+    执行原生sql查询，在django中可以自己引入pymysql执行sql，也可以调用orm提供的raw方法来执行sql语句
+    如果使用raw方法执行sql语句，则返回结果是queryset，这个返回结果在操作字段时，会有额外性能损耗
+
+多库共存
+    在django中，settings.py配置的Databases配置项允许注册多个数据库，当然也就支持在项目中随时切换操作不同的数据库
+
         
 
 

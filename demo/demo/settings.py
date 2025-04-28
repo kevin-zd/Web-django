@@ -118,7 +118,20 @@ DATABASES = {
             'POOL_SIZE': 10,      # 默认情况下，打开的数据库连接对象的数量【1，2，3，4，5，6，7，8，9，10】
             'MAX_OVERFLOW': 30,   # 负载情况下，允许溢出的连接数量 【11，12，13，14，15，16，17，18，19，20】
         }
+    },
+    'djdemo': {
+        'ENGINE': 'django.db.backends.mysql',    # ORM的底层对接pymysql的核心引擎类
+        'NAME': 'students',          # 数据库名
+        'USER': 'root',           # 账号
+        'PASSWORD': '000000',     # 密码
+        'HOST': '192.168.97.135',   # 数据库IP
+        'PORT': '3306',             # 端口
+        'POOL_OPTIONS': {         # pool表示数据库连接池配置，主要为了节省连接数据库的开发，临时存储数据库连接对象
+            'POOL_SIZE': 10,      # 默认情况下，打开的数据库连接对象的数量【1，2，3，4，5，6，7，8，9，10】
+            'MAX_OVERFLOW': 30,   # 负载情况下，允许溢出的连接数量 【11，12，13，14，15，16，17，18，19，20】
+        }
     }
+
 }
 
 
@@ -176,3 +189,4 @@ SESSION_ENGINE = "django.contrib.sessions.backends.file"
 
 # session存储引擎为文件时的存储目录
 SESSION_FILE_PATH = BASE_DIR / "session_path"     # 路径拼接，如果当前目录不存在，必须手动创建，否则报错
+
